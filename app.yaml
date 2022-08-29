@@ -1,5 +1,6 @@
 runtime: python
-env: flex
+env: standard
+instance_class: F1
 
 env_variables:
   PORT: 8080
