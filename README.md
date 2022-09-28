@@ -17,6 +17,9 @@ streamlit run view.py
 
 ## Google App Engine
 
+> 評価対象データによっては、コンピュータリソースを増強する必要あり。
+> 事前にローカル環境で評価の上、リソースを確定すること。
+
 Google CloudShellを起動し、以下のコマンドを実行する。
 
 ```bash
@@ -43,3 +46,7 @@ gcloud projects delete your-project-name
 
 - ローカルPCの場合は、http://localhost:8501/ を開く(`streamlit config show` でデフォルト設定確認可能)
 - Google App Engine の場合CloudShell上で `gcloud app browse` を実行
+
+# おまけ
+
+- [librosa公式ドキュメント一部勝手日本語翻訳](./doc/librosa/README_jp.md)
