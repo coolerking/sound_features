@@ -20,23 +20,6 @@ import matplotlib.pyplot as plt
 import streamlit as st
 
 
-
-
-def _normalize(x:any, axis=0):
-    """
-    行もしくは列ごとに正規化処理
-
-    Parameters
-    ------
-    x       値群
-    axis    正規化範囲(対象の次元数)
-
-    Returns
-    -----
-    正規化済み値群
-    """
-    return sklearn.preprocessing.minmax_scale(x, axis=axis)
-
 def _show_feature(uploaded_file:any, num_bins:int=1024, mel_dims:int=24)-> None:
     """
     対象のwavファイルを読み込み、メタ情報や各種特徴量グラフを
@@ -151,21 +134,6 @@ def _show_feature(uploaded_file:any, num_bins:int=1024, mel_dims:int=24)-> None:
     st.write('- Y: Magnitude of Frequency')
     st.write(f'- {spectrum.shape[1]} lines: distributed spectrums by STFT')
     st.pyplot(fig2)
-
-
-    ## 一般的に位相は特徴量として使用されないので可視化をomit
-
-    # STFT 結果：位相の可視化
-    #fig3 = plt.figure(figsize=(16, 6))
-    #plt.title(f'STFT -> Phase of Frequency / {path} ' + 
-    #'(frame_size:{frame_size}, frame_shift:{frame_shift}, samples:{sample_count}, {spectrum.shape[1]} lines)')
-    #plt.plot(phase)
-    #plt.grid()
-    #st.write('### Phase of Frequency Graph')
-    #st.write(f'- X: num_bins(half of samples):{num_bins} + 1 (0Hz)')
-    #st.write('- Y: Phase of Frequency')
-    #st.write(f'- {phase.shape[1]} lines: distributed spectrums by STFT')
-    #st.pyplot(fig3)
 
     # 音声のパワースペクトログラム
     # X座標：時間 (Sec)
@@ -282,23 +250,6 @@ def _show_feature(uploaded_file:any, num_bins:int=1024, mel_dims:int=24)-> None:
     st.write('  - mean: %.2f' % mfccs.mean())
     st.write('  - var:  %.2f' % mfccs.var())
     st.pyplot(fig8)
-
-
-    # ログメル周波数ケプストラム係数 log-melspectrogram
-    #mel = librosa.feature.melspectrogram(y=y, sr=sr)
-    # 対数変換
-    #log_mel = np.log(mel)
-
-    #fig9 = plt.figure(figsize=(16, 6))
-    #librosa.display.specshow(log_mel, sr=sr, x_axis='time', y_axis='linear')
-    #plt.title(f'log-Mel Spectrogram / {path} (shape:{log_mel.shape})')
-    #st.write('### Log Mel Spectrogram')
-    #st.write(f'- mel shape: {mel.shape}')
-    #st.write(f'- log mel shape: {log_mel.shape}')
-    #st.write('- X: time (Sec)')
-    #st.write('- Y: Frequency (Hz)')
-    #st.write('- value: mel-spectrogram log-scale')
-    #st.pyplot(fig9)
 
 
 def main()->None:
