@@ -199,7 +199,7 @@ def _show_feature(uploaded_file:any, num_bins:int=1024, mel_dims:int=24)-> None:
 
     st.write('### Spectral Centroid')
     st.write(f'- spectral centroids shape: {spectral_centroids.shape} / {spectral_centroids.dtype}')
-    st.write(f'- {len(spectral_centroids)} frames')
+    st.write(f'- {len(frames)} frames / time {len(t)} slices / alpha {alpha}')
     st.write('- X: time (Sec)')
     st.write(f'- Y (blue): magnitude of frequency {num_bins}bins / alpha: {alpha}')
     st.write(f'- Y (red):  spectral centroid {sample_count} samples')
@@ -226,6 +226,7 @@ def _show_feature(uploaded_file:any, num_bins:int=1024, mel_dims:int=24)-> None:
     plt.plot(t, sklearn.preprocessing.minmax_scale(spectral_rolloff, axis=0), color='r')
     plt.title(f'Spectral Rolloff / {path} ({len(spectral_rolloff)} frames, num_bins:{num_bins}, {sample_count} samples)')
     st.write('### Spectral Rolloff')
+    st.write(f'- {len(frames)} frames / time {len(t)} slices / alpha {alpha}')
     st.write('- X: time (Sec)')
     st.write(f'- Y (blue): magnitude of frequency / alpha: {alpha}')
     st.write('- Y (red):  spectral rolloff')
@@ -250,6 +251,64 @@ def _show_feature(uploaded_file:any, num_bins:int=1024, mel_dims:int=24)-> None:
     st.write('  - mean: %.2f' % mfccs.mean())
     st.write('  - var:  %.2f' % mfccs.var())
     st.pyplot(fig8)
+
+    # 乗法歪み補正
+    log_mel_spectrum_mean = np.mean(log_mel_spectrum, axis=1)
+    num_dims, num_frames = log_mel_spectrum.shape
+    log_mel_spectrum_norm = log_mel_spectrum
+    # 平均を引く
+    for j in range(0, num_dims):
+        for t in range(0, num_frames):
+            log_mel_spectrum_norm[j, t] = log_mel_spectrum[j, t] - log_mel_spectrum_mean[j]
+    
+
+    fig9 = plt.figure(figsize=(16, 6))
+    librosa.display.specshow(log_mel_spectrum_norm, sr=sr, hop_length=frame_shift, x_axis='time', y_axis='mel')
+    plt.title(f'log-Mel Spectrogram without multiplicative distortion / {path} (shape:{log_mel_spectrum_norm.shape})')
+    plt.colorbar()
+    st.write('### log-mel spectrogram without multiplicative distortion')
+    st.write('- X: time (Sec)')
+    st.write('- Y: Frequency (Hz)')
+    st.write('- value: mel-spectrogram log-scale without multiplicative distortion')
+    st.write(f'- log_mel_spectrum_norm shape: {log_mel_spectrum_norm.shape} / {log_mel_spectrum_norm.dtype}')
+    st.pyplot(fig9)
+
+    # 動的特徴量
+    st.write('## Dynamic Features')
+
+    # Δログメルスペクトログラム
+    width = 5
+    order = 1
+    D_log_mel_spectrum = librosa.feature.delta(log_mel_spectrum, width=width, order=order)
+
+    fig10 = plt.figure(figsize=(16, 6))
+    librosa.display.specshow(D_log_mel_spectrum, sr=sr, hop_length=frame_shift, x_axis='time', y_axis='mel')
+    plt.title(f'Delta log-Mel Spectrogram / {path} (shape:{D_log_mel_spectrum.shape})')
+    plt.colorbar()
+    st.write('### Felta log-mel Spectrogram')
+    st.write('- X: time (Sec)')
+    st.write('- Y: Frequency (Hz)')
+    st.write('- value: delta (log-mel spectrum)')
+    st.write(f'- width ={width}, order = {order}')
+    st.write(f'- D_log_mel shape: {D_log_mel_spectrum.shape} / {D_log_mel_spectrum.dtype}')
+    st.pyplot(fig10)
+
+    # ΔΔログメルスペクトログラム
+    width = 7
+    order = 2
+    DD_log_mel_spectrum = librosa.feature.delta(log_mel_spectrum, width=width, order=order)
+
+    fig11 = plt.figure(figsize=(16, 6))
+    librosa.display.specshow(DD_log_mel_spectrum, sr=sr, hop_length=frame_shift, x_axis='time', y_axis='mel')
+    plt.title(f'Delta Delta log-Mel Spectrogram / {path} (shape:{DD_log_mel_spectrum.shape})')
+    plt.colorbar()
+    st.write('### Delta Delta log-mel Spectrogram')
+    st.write('- X: time (Sec)')
+    st.write('- Y: Frequency (Hz)')
+    st.write('- value: delta (log-mel spectrum)')
+    st.write(f'- width ={width}, order = {order}')
+    st.write(f'- D_log_mel shape: {DD_log_mel_spectrum.shape} / {DD_log_mel_spectrum.dtype}')
+    st.pyplot(fig11)
 
 
 def main()->None:
