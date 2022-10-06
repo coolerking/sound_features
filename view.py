@@ -285,7 +285,7 @@ def _show_feature(uploaded_file:any, num_bins:int=1024, mel_dims:int=24)-> None:
     librosa.display.specshow(D_log_mel_spectrum, sr=sr, hop_length=frame_shift, x_axis='time', y_axis='mel')
     plt.title(f'Delta log-Mel Spectrogram / {path} (shape:{D_log_mel_spectrum.shape})')
     plt.colorbar()
-    st.write('### Felta log-mel Spectrogram')
+    st.write('### Delta log-mel Spectrogram')
     st.write('- X: time (Sec)')
     st.write('- Y: Frequency (Hz)')
     st.write('- value: delta (log-mel spectrum)')
